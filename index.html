@@ -1,0 +1,185 @@
+<title>USJ e整理券 配布状況</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --bg:#F5F3F6; --surface:#FFFFFF; --ink:#1B1720; --muted:#6B6472; --faint:#938BA0;
+  --line:#E2DDE6; --accent:#7A2E4E;
+  --dist:#2F7D5F; --free:#3A6EA5; --end:#EBDFE2; --end-ink:#A3374A;
+  --absent:#EFECF2; --miss-a:#E4DEE9; --miss-b:#F1EEF4;
+  --cell-h:19px; --gap:3px; --wx-size:25px; --wx-sub:15px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#141118; --surface:#1C1822; --ink:#EDE9F2; --muted:#9A93A6; --faint:#7A7386;
+    --line:#2C2635; --accent:#D98BA8;
+    --dist:#3E9A72; --free:#5B93CC; --end:#332A36; --end-ink:#E0899A;
+    --absent:#221D29; --miss-a:#2A2434; --miss-b:#1D1826;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F5F3F6; --surface:#FFFFFF; --ink:#1B1720; --muted:#6B6472; --faint:#938BA0;
+  --line:#E2DDE6; --accent:#7A2E4E;
+  --dist:#2F7D5F; --free:#3A6EA5; --end:#EBDFE2; --end-ink:#A3374A;
+  --absent:#EFECF2; --miss-a:#E4DEE9; --miss-b:#F1EEF4;
+}
+:root[data-theme="dark"]{
+  --bg:#141118; --surface:#1C1822; --ink:#EDE9F2; --muted:#9A93A6; --faint:#7A7386;
+  --line:#2C2635; --accent:#D98BA8;
+  --dist:#3E9A72; --free:#5B93CC; --end:#332A36; --end-ink:#E0899A;
+  --absent:#221D29; --miss-a:#2A2434; --miss-b:#1D1826;
+}
+
+body{
+  margin:0; padding:28px 20px 56px; background:var(--bg); color:var(--ink);
+  font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  font-size:14px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+.wrap{ max-width:1080px; margin:0 auto; display:flex; flex-direction:column; gap:22px; }
+.wrap > header{ display:flex; flex-direction:column; gap:10px; }
+
+h1{
+  font-family:"Hiragino Mincho ProN","Yu Mincho",YuMincho,serif;
+  font-weight:600; font-size:27px; line-height:1.3; margin:0; text-wrap:balance;
+  letter-spacing:.01em;
+}
+.meta{
+  display:flex; flex-wrap:wrap; gap:6px 18px; margin:0; padding:0; list-style:none;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px;
+  color:var(--faint); font-variant-numeric:tabular-nums;
+}
+.meta b{ color:var(--muted); font-weight:600; }
+
+.banner{
+  border:1px solid var(--accent); border-left-width:3px; border-radius:3px;
+  padding:10px 14px; color:var(--ink); background:var(--surface); font-size:13px;
+}
+.banner b{ color:var(--accent); }
+
+.legend{ display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12px; color:var(--muted); }
+.legend span{ display:inline-flex; align-items:center; gap:6px; }
+.key{ width:22px; height:10px; border-radius:2px; display:inline-block; }
+.key.distributing{ background:var(--dist); }
+.key.no_ticket_needed{ background:var(--free); }
+.key.ended{ background:var(--end); box-shadow:inset 0 0 0 1px var(--line); }
+.key.absent{ background:var(--absent); box-shadow:inset 0 0 0 1px var(--line); }
+.key.missing{ background:repeating-linear-gradient(45deg,var(--miss-a) 0 3px,var(--miss-b) 3px 6px); }
+.key.open{ width:2px; height:12px; border-radius:0; background:var(--accent); }
+
+section{
+  background:var(--surface); border:1px solid var(--line); border-radius:4px;
+  padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px;
+}
+.head{ display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; }
+.head h2{
+  font-family:"Hiragino Mincho ProN","Yu Mincho",YuMincho,serif;
+  font-size:17px; font-weight:600; margin:0; letter-spacing:.01em;
+}
+.head .sum{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px;
+  color:var(--muted); font-variant-numeric:tabular-nums;
+}
+.head .sum .n{ color:var(--faint); }
+
+.rows{ display:flex; flex-direction:column; gap:var(--gap); }
+.row, .axis{
+  display:grid; grid-template-columns:62px 66px 82px minmax(0,1fr) 92px;
+  align-items:center; column-gap:12px;
+}
+.axis{ padding-bottom:2px; }
+.ticks{ display:grid; grid-template-columns:repeat(15,1fr);
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:10px;
+  color:var(--faint); font-variant-numeric:tabular-nums; }
+.ticks i{ font-style:normal; }
+.colhead{ font-size:10px; color:var(--faint); letter-spacing:.04em; }
+
+.col-day{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px;
+  font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap;
+  display:flex; align-items:center; gap:3px;
+}
+.col-day span{ color:var(--faint); font-size:11px; }
+.col-wx{ display:flex; align-items:center; justify-content:flex-start; min-width:0; }
+.wxset{ display:inline-flex; align-items:center; }
+.wxset.seq{ gap:1px; }
+.wxset.stack{ position:relative; }
+.slash{ color:var(--faint); font-size:11px; opacity:.7; }
+.wx{
+  width:var(--wx-size); height:var(--wx-size); flex:none;
+  stroke:currentColor; fill:none; stroke-width:1.05;
+  stroke-linecap:round; stroke-linejoin:round; color:var(--faint);
+}
+/* 重ねる側は背景色の円を敷いて下の線を隠す */
+.wxset.stack .wx.sub{
+  position:absolute; right:-5px; bottom:-4px;
+  width:var(--wx-sub); height:var(--wx-sub);
+  background:var(--surface); border-radius:50%; padding:.5px;
+  box-sizing:content-box; stroke-width:1.3;
+}
+.wx.wet{ color:var(--free); }
+.legend .wx{ width:20px; height:20px; }
+.row.wknd .col-day{ color:var(--accent); }
+.row.wknd .col-day span{ color:var(--accent); opacity:.75; }
+
+.col-open, .col-end{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px;
+  font-variant-numeric:tabular-nums; color:var(--muted); white-space:nowrap;
+}
+.col-open small{ color:var(--faint); margin-left:5px; }
+.col-end{ text-align:right; }
+.col-end b{ font-size:13px; font-weight:600; color:var(--end-ink); }
+.col-end b.soft{ color:var(--faint); font-weight:500; }
+.col-end small{ display:block; color:var(--faint); font-size:10px; line-height:1.2; }
+
+.track{
+  position:relative; display:grid; grid-template-columns:repeat(180,1fr);
+  height:var(--cell-h); background:var(--absent); border-radius:2px;
+}
+.track::after{
+  content:""; position:absolute; inset:0; pointer-events:none; border-radius:2px;
+  background:repeating-linear-gradient(to right,
+    color-mix(in srgb, var(--line) 80%, transparent) 0 1px,
+    transparent 1px calc(100%/15));
+}
+.seg{ height:100%; font-style:normal; }
+.seg.distributing{ background:var(--dist); }
+.seg.no_ticket_needed{ background:var(--free); }
+.seg.ended{ background:var(--end); }
+.seg.other{ background:var(--free); opacity:.5; }
+.seg.absent{ background:transparent; }
+.seg.missing{ background:repeating-linear-gradient(45deg,var(--miss-a) 0 3px,var(--miss-b) 3px 6px); }
+.open-mark{ position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--accent); }
+
+footer{ color:var(--muted); font-size:12.5px; display:flex; flex-direction:column; gap:7px; }
+footer h3{ font-size:12.5px; margin:0 0 -2px; color:var(--ink); font-weight:600; }
+footer ul{ margin:0; padding-left:1.1em; display:flex; flex-direction:column; gap:5px; }
+footer a{ color:var(--accent); }
+
+@media (max-width:700px){
+  body{ padding:20px 14px 44px; }
+  .row, .axis{ grid-template-columns:54px 66px minmax(0,1fr) 74px; column-gap:8px; }
+  .col-open{ display:none; }
+  h1{ font-size:22px; }
+}
+@media (prefers-reduced-motion:reduce){ *{ transition:none !important; animation:none !important; } }
+</style>
+<div class="wrap">
+<header>
+  <h1>USJ e整理券 配布状況</h1>
+  <ul class="meta"><li>観測データなし</li></ul>
+</header>
+
+<div class="legend"><span><i class="key distributing"></i>配布中</span><span><i class="key no_ticket_needed"></i>整理券なしで体験可</span><span><i class="key ended"></i>発券終了</span><span><i class="key absent"></i>項目なし</span><span><i class="key missing"></i>欠測</span><span><i class="key open"></i>開園</span></div>
+<div class="legend"><span><svg class="wx" viewBox="0 0 16 16" role="img" aria-label="晴れ"><title>晴れ</title><circle cx="8" cy="8" r="3"/><path d="M8 1.4v1.8M8 12.8v1.8M1.4 8h1.8M12.8 8h1.8M3.3 3.3l1.3 1.3M11.4 11.4l1.3 1.3M12.7 3.3l-1.3 1.3M4.6 11.4l-1.3 1.3"/></svg>晴れ</span><span><svg class="wx" viewBox="0 0 16 16" role="img" aria-label="薄曇り"><title>薄曇り</title><circle cx="11.8" cy="4" r="1.8"/><path d="M11.8.5v1M15.2 4h-1M14.2 1.6l-.7.7M14.2 6.4l-.7-.7"/><path d="M3.4 13.2h6.2a2.3 2.3 0 0 0 .2-4.4 3.2 3.2 0 0 0-6-.8 2.7 2.7 0 0 0-.4 5.2z"/></svg>薄曇り</span><span><svg class="wx" viewBox="0 0 16 16" role="img" aria-label="曇り"><title>曇り</title><path d="M3.4 13.4h6.2a2.3 2.3 0 0 0 .2-4.4 3.2 3.2 0 0 0-6-.8 2.7 2.7 0 0 0-.4 5.2z"/></svg>曇り</span><span><svg class="wx" viewBox="0 0 16 16" role="img" aria-label="霧"><title>霧</title><path d="M3.4 10.8h6.2a2.3 2.3 0 0 0 .2-4.4 3.2 3.2 0 0 0-6-.8 2.7 2.7 0 0 0-.4 5.2z"/><path d="M2.6 13.2h10.8M5 15.4h6"/></svg>霧</span><span><svg class="wx wet" viewBox="0 0 16 16" role="img" aria-label="雨"><title>雨</title><path d="M3.4 11.0h6.2a2.3 2.3 0 0 0 .2-4.4 3.2 3.2 0 0 0-6-.8 2.7 2.7 0 0 0-.4 5.2z"/><path d="M5.4 12.4l-.9 2.4M8 12.4l-.9 2.4M10.6 12.4l-.9 2.4"/></svg>雨</span><span><svg class="wx wet" viewBox="0 0 16 16" role="img" aria-label="雪"><title>雪</title><path d="M3.4 11.0h6.2a2.3 2.3 0 0 0 .2-4.4 3.2 3.2 0 0 0-6-.8 2.7 2.7 0 0 0-.4 5.2z"/><path d="M5.2 12.6v2.6M4 13.3l2.4 1.2M6.4 13.3l-2.4 1.2"/><path d="M9.8 12.6v2.6M8.6 13.3l2.4 1.2M11 13.3l-2.4 1.2"/></svg>雪</span><span><svg class="wx wet" viewBox="0 0 16 16" role="img" aria-label="雷雨"><title>雷雨</title><path d="M3.4 10.2h6.2a2.3 2.3 0 0 0 .2-4.4 3.2 3.2 0 0 0-6-.8 2.7 2.7 0 0 0-.4 5.2z"/><path d="M8.2 11.4 6 14.3h1.9L7 15.8"/></svg>雷雨</span></div>
+
+<footer>
+  <h3>この記録で分かること・分からないこと</h3>
+  <ul>
+    <li>分かるのは「発券が終了したか否か」だけ。e整理券は入園後しかアプリに出ないため、残り枚数は外から見えない。</li>
+    <li>体験枠の時刻は取得できない。「◯時までに入園すれば取れた」は言えるが「早い枠が取れる」は言えない。</li>
+    <li>終了時刻は<b>終了を最初に観測した時刻</b>。実際の終了はその5分前〜（公式ページの更新遅れぶん）さらに前の可能性がある。数値にカーソルを合わせると直前に在庫を確認できた時刻が出る。</li>
+    <li>ハッチ部分は観測できなかった時間。配布中と混同しないよう区別している。</li>
+    <li>開園前の薄い部分は、公式ページに当該項目が出ていなかった時間帯。</li>
+  </ul>
+</footer>
+</div>
